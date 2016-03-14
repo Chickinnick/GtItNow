@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment implements TextView.OnEditorActionListener {
+    public static class PlaceholderFragment extends Fragment implements View.OnClickListener {
 
         private static final String LOG_TAG = PlaceholderFragment.class.getSimpleName();
         /**
@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private TextView textView;
 
         public PlaceholderFragment() {
         }
@@ -123,30 +124,26 @@ public class MainActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-
+            rootView.findViewById(R.id.button_start).setOnClickListener(this);
             AppCompatEditText appCompatEditText = (AppCompatEditText) rootView.findViewById(R.id.main_edit_text);
-            appCompatEditText.setOnEditorActionListener(this);
             return rootView;
         }
 
 
         @Override
-        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            if (actionId == EditorInfo.IME_NULL
-                    && event.getAction() == KeyEvent.ACTION_DOWN) {
-                GoogleRetrofitService.getInstance().makeCall(v.getText().toString());
-            }
-            return true;
+        public void onClick(View v) {
+            GoogleRetrofitService.getInstance().makeCall(textView.getText().toString());
         }
+    }
     }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -156,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            return MainActivity.PlaceholderFragment.newInstance(position + 1);
         }
 
         @Override
@@ -177,5 +174,4 @@ public class MainActivity extends AppCompatActivity {
             }
             return null;
         }
-    }
 }
